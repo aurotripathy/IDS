@@ -63,7 +63,7 @@ print(len(columns))
 print(all_data.head())
 categorical_cols = ['protocol_type', 'service', 'flag']
 train_categorical_vars = all_data[categorical_cols]
-# train_categorical_vars = train_categorical_vars[categorical_cols].astype('category')
+train_categorical_vars = train_categorical_vars[categorical_cols].astype('category')
 
 print('total categorical vars', train_categorical_vars.columns)
 train_continuous_vars = all_data.drop(categorical_cols + ['class', 'successful_pred'], axis=1)
