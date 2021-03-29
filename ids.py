@@ -117,7 +117,7 @@ test_labels = encoded_labels[25000:]
 
 
 model = Sequential([
-    Dense(64, activation='relu', input_shape=[None, 55]),
+    Dense(64, activation='relu', input_shape=[55]),
     Dense(5, activation='softmax')
 ])
 
