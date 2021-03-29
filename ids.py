@@ -18,10 +18,10 @@ probe = ['ipsweep', 'mscan', 'nmap', 'portsweep', 'saint', 'satan']
 R2L = ['spy', 'warezclient', 'ftp_write', 'guess_passwd', 'httptunnel', 'imap', 'multihop',
        'named', 'phf', 'sendmail', 'snmpgetattack', 'warezmaster', 'xlock', 'xsnoop']
 U2R = ['buffer_overflow', 'loadmodule', 'perl', 'ps', 'rootkit', 'snmpguess', 'sqlattack', 'worm xterm']
-category_dict = {'DOS': 1, 'probe': 2, 'R2L': 3, 'U2R': 4, 'normal': 5}
 
 
-def attack_to_category(df):
+def attack_to_class(df):
+    """ converts the attacks to N=4 classes. Model output os one of these classes plus normal"""
     for i in df.index:
         if df[i] in DOS:
             df.at[i] = 'DOS'
@@ -41,7 +41,6 @@ print('read records', len(all_test))
 print('test cols', all_test.columns)
 all_data = all_data.append(all_test, ignore_index=True)
 print('total train + test records', len(all_data))
-
 
 col_grp_1 = ['duration', 'protocol_type', 'service', 'flag', 'src_bytes', 'dst_bytes', 'land',
              'wrong_fragment', 'urgent']
@@ -64,18 +63,18 @@ print(len(columns))
 print(all_data.head())
 categorical_cols = ['protocol_type', 'service', 'flag']
 train_categorical_vars = all_data[categorical_cols]
-train_categorical_vars = train_categorical_vars[categorical_cols].astype('category')
+# train_categorical_vars = train_categorical_vars[categorical_cols].astype('category')
 
-print('total categorical vars\n', train_categorical_vars.columns)
+print('total categorical vars', train_categorical_vars.columns)
 train_continuous_vars = all_data.drop(categorical_cols + ['class', 'successful_pred'], axis=1)
-print('train continuous vars\n', train_continuous_vars.columns)
+print('train continuous vars', train_continuous_vars.columns)
 train_labels = all_data['class']
 
 print(train_categorical_vars.head())
 print(train_continuous_vars.head())
 print(train_labels.head())
 
-labels = attack_to_category(train_labels)
+labels = attack_to_class(train_labels)
 
 # encode the labels
 # https://machinelearningmastery.com/how-to-one-hot-encode-sequence-data-in-python/
