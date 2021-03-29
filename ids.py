@@ -20,8 +20,6 @@ R2L = ['spy', 'warezclient', 'ftp_write', 'guess_passwd', 'httptunnel', 'imap', 
 U2R = ['buffer_overflow', 'loadmodule', 'perl', 'ps', 'rootkit', 'snmpguess', 'sqlattack', 'worm xterm']
 category_dict = {'DOS': 1, 'probe': 2, 'R2L': 3, 'U2R': 4, 'normal': 5}
 
-protocol = {'tcp': 1, 'udp': 2, 'http': 3}
-
 
 def attack_to_category(df):
     for i in df.index:
