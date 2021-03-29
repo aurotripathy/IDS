@@ -4,7 +4,8 @@ from tensorflow.keras.utils import to_categorical
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import OneHotEncoder
-
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.models import Sequential
 
 root_folder = '/media/auro/RAID 5/networking'
 train_dataset = 'KDDTrain+.txt'
@@ -22,7 +23,7 @@ category_dict = {'DOS': 1, 'probe': 2, 'R2L': 3, 'U2R': 4, 'normal': 5}
 protocol = {'tcp': 1, 'udp': 2, 'http': 3}
 
 
-def to_category(df):
+def attack_to_category(df):
     for i in df.index:
         if df[i] in DOS:
             df.at[i] = 'DOS'
@@ -67,24 +68,25 @@ categorical_cols = ['protocol_type', 'service', 'flag']
 train_categorical_vars = all_data[categorical_cols]
 train_categorical_vars = train_categorical_vars[categorical_cols].astype('category')
 
-print('total cat vars', train_categorical_vars.columns)
+print('total categorical vars\n', train_categorical_vars.columns)
 train_continuous_vars = all_data.drop(categorical_cols + ['class', 'successful_pred'], axis=1)
-print('train cont vars\n', train_continuous_vars.columns)
+print('train continuous vars\n', train_continuous_vars.columns)
 train_labels = all_data['class']
 
 print(train_categorical_vars.head())
 print(train_continuous_vars.head())
 print(train_labels.head())
 
-labels = to_category(train_labels)
+labels = attack_to_category(train_labels)
 
 # encode the labels
 # https://machinelearningmastery.com/how-to-one-hot-encode-sequence-data-in-python/
-values = np.array(labels)
-print(values)
+# values = np.array(labels).astype('float32')
+# print(values)
 # integer encode
+
 label_encoder = LabelEncoder()
-encoded_labels = np.floor(label_encoder.fit_transform(values))
+encoded_labels = np.floor(label_encoder.fit_transform(labels))
 print(encoded_labels)
 print('unique_labels', np.unique(encoded_labels))
 
@@ -105,22 +107,21 @@ train_continuous_vars = np.array(train_continuous_vars)
 
 data_matrix = np.concatenate([train_continuous_vars, train_categorical_vars], axis=1)
 print(data_matrix.shape)
-print(labels.shape)
+print(encoded_labels.shape)
 
 train_matrix = data_matrix[:25000]
 print('train matrix', train_matrix.shape, type(train_matrix))
-trains_labels = labels[:25000]
+trains_labels = encoded_labels[:25000]
+print('train labels', train_labels.shape, type(train_labels))
 test_matrix = data_matrix[25000:]
 print('test matrix', test_matrix.shape, type(test_matrix))
-test_labels = labels[25000:]
+test_labels = encoded_labels[25000:]
 
-from tensorflow.keras.layers import Dense
-from tensorflow.keras.models import Sequential
 
 model = Sequential([
     Dense(64, activation='relu', input_shape=[None, 55]),
     Dense(5, activation='softmax')
 ])
 
-model.compile(optimizer='sgd', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 model.fit(train_matrix, trains_labels, epochs=10, validation_data=(test_matrix, test_labels), verbose=2)
