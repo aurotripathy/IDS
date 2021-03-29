@@ -106,13 +106,14 @@ data_matrix = np.concatenate([train_continuous_vars, train_categorical_vars], ax
 print(data_matrix.shape)
 print(encoded_labels.shape)
 
-train_matrix = data_matrix[:25000]
+split_index = 25000
+train_matrix = data_matrix[:split_index]
 print('train matrix', train_matrix.shape, type(train_matrix))
-trains_labels = encoded_labels[:25000]
+trains_labels = encoded_labels[:split_index]
 print('train labels', train_labels.shape, type(train_labels))
-test_matrix = data_matrix[25000:]
+test_matrix = data_matrix[split_index:]
 print('test matrix', test_matrix.shape, type(test_matrix))
-test_labels = encoded_labels[25000:]
+test_labels = encoded_labels[split_index:]
 
 
 model = Sequential([
