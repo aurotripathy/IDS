@@ -76,11 +76,11 @@ print(train_categorical_vars.head())
 print(train_continuous_vars.head())
 print(train_labels.head())
 
-train_labels = to_category(train_labels)
+labels = to_category(train_labels)
 
 # encode the labels
 # https://machinelearningmastery.com/how-to-one-hot-encode-sequence-data-in-python/
-values = np.array(train_labels)
+values = np.array(labels)
 print(values)
 # integer encode
 label_encoder = LabelEncoder()
@@ -103,7 +103,24 @@ print('categorical data:', train_categorical_vars.shape, type(train_categorical_
 
 train_continuous_vars = np.array(train_continuous_vars)
 
-# train_matrix = train_categorical_vars + train_continuous_vars
 data_matrix = np.concatenate([train_continuous_vars, train_categorical_vars], axis=1)
 print(data_matrix.shape)
-print(train_labels.shape)
+print(labels.shape)
+
+train_matrix = data_matrix[:25000]
+print('train matrix', train_matrix.shape, type(train_matrix))
+trains_labels = labels[:25000]
+test_matrix = data_matrix[25000:]
+print('test matrix', test_matrix.shape, type(test_matrix))
+test_labels = labels[25000:]
+
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.models import Sequential
+
+model = Sequential([
+    Dense(64, activation='relu', input_shape=[None, 55]),
+    Dense(5, activation='softmax')
+])
+
+model.compile(optimizer='sgd', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+model.fit(train_matrix, trains_labels, epochs=10, validation_data=(test_matrix, test_labels), verbose=2)
