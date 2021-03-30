@@ -107,7 +107,10 @@ data_matrix = np.concatenate([all_categorical_vars, all_continuous_vars], axis=1
 print('data matrix shape:', data_matrix.shape)
 print('labels shape', all_encoded_labels.shape)
 
-split_index = 125000
+train_test_split = 0.7
+split_index = int(148517 * train_test_split)
+print('split at', split_index)
+
 train_matrix = data_matrix[:split_index]
 print('train matrix', train_matrix.shape, type(train_matrix))
 train_labels = all_encoded_labels[:split_index]
