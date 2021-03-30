@@ -3,7 +3,7 @@ import pandas
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import OneHotEncoder
-from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.models import Sequential
 
 root_folder = '/media/auro/RAID 5/networking'
@@ -95,15 +95,19 @@ all_categorical_vars['flag'] = label_encoder.fit_transform(all_categorical_vars[
 
 # now encode the categorical input
 one_hot_encoder = OneHotEncoder()
-all_categorical_vars = one_hot_encoder.fit_transform(all_categorical_vars).todense()
+all_categorical_vars = one_hot_encoder.fit_transform(all_categorical_vars).toarray()
 
-print('categorical data:', all_categorical_vars.shape, type(all_categorical_vars))
+print('categorical data shape:', all_categorical_vars.shape, type(all_categorical_vars))
 
 all_continuous_vars = np.array(all_continuous_vars)
 
-data_matrix = np.concatenate([all_continuous_vars, all_categorical_vars], axis=1)
-print(data_matrix.shape)
-print(all_encoded_labels.shape)
+data_matrix = np.concatenate([all_categorical_vars, all_continuous_vars], axis=1)
+print('data matrix shape:', data_matrix.shape)
+print('labels shape', all_encoded_labels.shape)
+
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler(feature_range=(0, 100))
+data_matrix = scaler.fit_transform(data_matrix)
 
 split_index = 125000
 train_matrix = data_matrix[:split_index]
@@ -113,12 +117,15 @@ print('train labels', train_labels.shape, type(train_labels))
 test_matrix = data_matrix[split_index:]
 print('test matrix', test_matrix.shape, type(test_matrix))
 test_labels = all_encoded_labels[split_index:]
-
+print('test labels', test_labels.shape, type(test_labels))
 
 model = Sequential([
-    Dense(64, activation='relu', input_shape=[55]),
+    Dense(128, activation='relu', input_shape=[55]),
+    Dropout(0.25),
+    Dense(64, activation='relu'),
+    Dropout(0.25),
     Dense(5, activation='softmax')
 ])
 
 model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
-model.fit(train_matrix, train_labels, epochs=10, validation_data=(test_matrix, test_labels), verbose=2)
+model.fit(train_matrix, train_labels, epochs=20, validation_data=(test_matrix, test_labels), verbose=2)
