@@ -88,13 +88,14 @@ print(all_encoded_labels)
 print('unique_labels', np.unique(all_encoded_labels))
 
 
-# creating instance of label_encoder
-# label_encoder = LabelEncoder()  # Assigning numerical values and storing in another column
 all_categorical_vars['protocol_type'] = label_encoder.fit_transform(all_categorical_vars['protocol_type'])
 all_categorical_vars['service'] = label_encoder.fit_transform(all_categorical_vars['protocol_type'])
 all_categorical_vars['flag'] = label_encoder.fit_transform(all_categorical_vars['flag'])
+print('unique protocol types', np.unique(all_categorical_vars['protocol_type']))
+print('unique service types', np.unique(all_categorical_vars['service']))
+print('unique flag types', np.unique(all_categorical_vars['flag']))
 
-# now encode the categorical input
+# now encode the categorical inputs
 one_hot_encoder = OneHotEncoder()
 all_categorical_vars = one_hot_encoder.fit_transform(all_categorical_vars).toarray()
 
@@ -106,7 +107,6 @@ data_matrix = np.concatenate([all_categorical_vars, all_continuous_vars], axis=1
 print('data matrix shape:', data_matrix.shape)
 print('labels shape', all_encoded_labels.shape)
 
-
 split_index = 125000
 train_matrix = data_matrix[:split_index]
 print('train matrix', train_matrix.shape, type(train_matrix))
@@ -115,7 +115,6 @@ print('train labels', train_labels.shape, type(train_labels))
 
 scaler = StandardScaler()
 train_matrix = scaler.fit_transform(train_matrix)
-
 
 test_matrix = data_matrix[split_index:]
 print('test matrix', test_matrix.shape, type(test_matrix))
