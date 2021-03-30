@@ -11,26 +11,26 @@ root_folder = '/media/auro/RAID 5/networking'
 train_dataset = 'KDDTrain+.txt'
 test_dataset = 'KDDTest+.txt'
 
-# categories + 'normal'
-normal = ['normal']
-DOS = ['apache2', 'back', 'land', 'mailbomb', 'neptune', 'pod', 'processtable', 'smurf', 'teardrop', 'udpstorm']
-probe = ['ipsweep', 'mscan', 'nmap', 'portsweep', 'saint', 'satan']
-R2L = ['spy', 'warezclient', 'ftp_write', 'guess_passwd', 'httptunnel', 'imap', 'multihop',
-       'named', 'phf', 'sendmail', 'snmpgetattack', 'warezmaster', 'xlock', 'xsnoop']
-U2R = ['buffer_overflow', 'loadmodule', 'perl', 'ps', 'rootkit', 'snmpguess', 'sqlattack', 'worm xterm']
-
 
 def attack_to_class(df):
     """ converts the attacks to N=4 classes. Model output os one of these classes plus normal"""
+    # categories + 'normal'
+    dos = ['apache2', 'back', 'land', 'mailbomb', 'neptune', 'pod', 'processtable', 'smurf', 'teardrop', 'udpstorm']
+    probe = ['ipsweep', 'mscan', 'nmap', 'portsweep', 'saint', 'satan']
+    r2l = ['spy', 'warezclient', 'ftp_write', 'guess_passwd', 'httptunnel', 'imap', 'multihop',
+           'named', 'phf', 'sendmail', 'snmpgetattack', 'warezmaster', 'xlock', 'xsnoop']
+    u2r = ['buffer_overflow', 'loadmodule', 'perl', 'ps', 'rootkit', 'snmpguess', 'sqlattack', 'worm xterm']
+
     for i in df.index:
-        if df[i] in DOS:
+        if df[i] in dos:
             df.at[i] = 'DOS'
         if df[i] in probe:
             df.at[i] = 'probe'
-        if df[i] in R2L:
+        if df[i] in r2l:
             df.at[i] = 'R2L'
-        if df[i] in U2R:
+        if df[i] in u2r:
             df.at[i] = 'U2R'
+        # else 'normal'
     return df
 
 
@@ -62,19 +62,19 @@ all_data.columns = columns + ['class', 'successful_pred']
 print(len(columns))
 print(all_data.head())
 categorical_cols = ['protocol_type', 'service', 'flag']
-train_categorical_vars = all_data[categorical_cols]
-train_categorical_vars = train_categorical_vars[categorical_cols].astype('category')
+all_categorical_vars = all_data[categorical_cols]
+all_categorical_vars = all_categorical_vars[categorical_cols].astype('category')
 
-print('total categorical vars', train_categorical_vars.columns)
-train_continuous_vars = all_data.drop(categorical_cols + ['class', 'successful_pred'], axis=1)
-print('train continuous vars', train_continuous_vars.columns)
-train_labels = all_data['class']
+print('total categorical vars', all_categorical_vars.columns)
+all_continuous_vars = all_data.drop(categorical_cols + ['class', 'successful_pred'], axis=1)
+print('train continuous vars', all_continuous_vars.columns)
+all_labels = all_data['class']
 
-print(train_categorical_vars.head())
-print(train_continuous_vars.head())
-print(train_labels.head())
+print(all_categorical_vars.head())
+print(all_continuous_vars.head())
+print(all_labels.head())
 
-labels = attack_to_class(train_labels)
+all_labels = attack_to_class(all_labels)
 
 # encode the labels
 # https://machinelearningmastery.com/how-to-one-hot-encode-sequence-data-in-python/
@@ -83,37 +83,37 @@ labels = attack_to_class(train_labels)
 # integer encode
 
 label_encoder = LabelEncoder()
-encoded_labels = np.floor(label_encoder.fit_transform(labels))
-print(encoded_labels)
-print('unique_labels', np.unique(encoded_labels))
+all_encoded_labels = np.floor(label_encoder.fit_transform(all_labels))
+print(all_encoded_labels)
+print('unique_labels', np.unique(all_encoded_labels))
 
 
 # creating instance of label_encoder
 # label_encoder = LabelEncoder()  # Assigning numerical values and storing in another column
-train_categorical_vars['protocol_type'] = label_encoder.fit_transform(train_categorical_vars['protocol_type'])
-train_categorical_vars['service'] = label_encoder.fit_transform(train_categorical_vars['protocol_type'])
-train_categorical_vars['flag'] = label_encoder.fit_transform(train_categorical_vars['flag'])
+all_categorical_vars['protocol_type'] = label_encoder.fit_transform(all_categorical_vars['protocol_type'])
+all_categorical_vars['service'] = label_encoder.fit_transform(all_categorical_vars['protocol_type'])
+all_categorical_vars['flag'] = label_encoder.fit_transform(all_categorical_vars['flag'])
 
 # now encode the categorical input
 one_hot_encoder = OneHotEncoder()
-train_categorical_vars = one_hot_encoder.fit_transform(train_categorical_vars).todense()
+all_categorical_vars = one_hot_encoder.fit_transform(all_categorical_vars).todense()
 
-print('categorical data:', train_categorical_vars.shape, type(train_categorical_vars))
+print('categorical data:', all_categorical_vars.shape, type(all_categorical_vars))
 
-train_continuous_vars = np.array(train_continuous_vars)
+all_continuous_vars = np.array(all_continuous_vars)
 
-data_matrix = np.concatenate([train_continuous_vars, train_categorical_vars], axis=1)
+data_matrix = np.concatenate([all_continuous_vars, all_categorical_vars], axis=1)
 print(data_matrix.shape)
-print(encoded_labels.shape)
+print(all_encoded_labels.shape)
 
-split_index = 25000
+split_index = 125000
 train_matrix = data_matrix[:split_index]
 print('train matrix', train_matrix.shape, type(train_matrix))
-trains_labels = encoded_labels[:split_index]
+train_labels = all_encoded_labels[:split_index]
 print('train labels', train_labels.shape, type(train_labels))
 test_matrix = data_matrix[split_index:]
 print('test matrix', test_matrix.shape, type(test_matrix))
-test_labels = encoded_labels[split_index:]
+test_labels = all_encoded_labels[split_index:]
 
 
 model = Sequential([
@@ -122,4 +122,4 @@ model = Sequential([
 ])
 
 model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
-model.fit(train_matrix, trains_labels, epochs=10, validation_data=(test_matrix, test_labels), verbose=2)
+model.fit(train_matrix, train_labels, epochs=10, validation_data=(test_matrix, test_labels), verbose=2)
