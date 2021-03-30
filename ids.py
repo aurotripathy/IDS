@@ -5,6 +5,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import OneHotEncoder
 from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.models import Sequential
+from sklearn.preprocessing import StandardScaler
 
 root_folder = '/media/auro/RAID 5/networking'
 train_dataset = 'KDDTrain+.txt'
@@ -56,7 +57,7 @@ column_grp_4 = ['dst_host_count', 'dst_host_srv_count', 'dst_host_same_srv_rate'
                 'dst_host_srv_serror_rate', 'dst_host_rerror_rate', 'dst_host_srv_rerror_rate']
 
 columns = column_grp_1 + column_grp_2 + column_grp_3 + column_grp_4
-all_data.columns = columns + ['class', 'successful_pred']
+all_data.columns = columns + ['class', 'success_score']  # success_score unused
 
 print(len(columns))
 print(all_data.head())
@@ -65,7 +66,7 @@ all_categorical_vars = all_data[categorical_cols]
 all_categorical_vars = all_categorical_vars[categorical_cols].astype('category')
 
 print('total categorical vars', all_categorical_vars.columns)
-all_continuous_vars = all_data.drop(categorical_cols + ['class', 'successful_pred'], axis=1)
+all_continuous_vars = all_data.drop(categorical_cols + ['class', 'success_score'], axis=1)
 print('train continuous vars', all_continuous_vars.columns)
 all_labels = all_data['class']
 
@@ -105,19 +106,23 @@ data_matrix = np.concatenate([all_categorical_vars, all_continuous_vars], axis=1
 print('data matrix shape:', data_matrix.shape)
 print('labels shape', all_encoded_labels.shape)
 
-from sklearn.preprocessing import MinMaxScaler
-scaler = MinMaxScaler(feature_range=(0, 100))
-data_matrix = scaler.fit_transform(data_matrix)
 
 split_index = 125000
 train_matrix = data_matrix[:split_index]
 print('train matrix', train_matrix.shape, type(train_matrix))
 train_labels = all_encoded_labels[:split_index]
 print('train labels', train_labels.shape, type(train_labels))
+
+scaler = StandardScaler()
+train_matrix = scaler.fit_transform(train_matrix)
+
+
 test_matrix = data_matrix[split_index:]
 print('test matrix', test_matrix.shape, type(test_matrix))
 test_labels = all_encoded_labels[split_index:]
 print('test labels', test_labels.shape, type(test_labels))
+
+test_matrix = scaler.transform(test_matrix)
 
 model = Sequential([
     Dense(128, activation='relu', input_shape=[55]),
