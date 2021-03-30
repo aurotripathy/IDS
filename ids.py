@@ -127,12 +127,13 @@ print('test labels', test_labels.shape, type(test_labels))
 test_matrix = scaler.transform(test_matrix)
 
 model = Sequential([
-    Dense(128, activation='relu', input_shape=[55]),
-    Dropout(0.25),
-    Dense(64, activation='relu'),
-    Dropout(0.25),
+    Dense(1, activation='relu', input_shape=[55]),
+    # Dropout(0.25),
+    # Dense(64, activation='relu'),
+    # Dropout(0.25),
     Dense(5, activation='softmax')
 ])
+print(model.summary())
 
 model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 model.fit(train_matrix, train_labels, epochs=20, validation_data=(test_matrix, test_labels), verbose=2)
