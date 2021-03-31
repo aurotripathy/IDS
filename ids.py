@@ -155,6 +155,5 @@ model = Sequential([
 ])
 print(model.summary())
 
-# model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 model.fit(train_matrix, train_labels, epochs=5, validation_data=(test_matrix, test_labels), verbose=2)
