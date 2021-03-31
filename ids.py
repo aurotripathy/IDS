@@ -15,22 +15,38 @@ test_dataset = 'KDDTest+.txt'
 def attack_to_class(df):
     """ converts the attacks to N=4 classes. Model output os one of these classes plus normal"""
     # categories + 'normal'
+    normal = ['normal']
     dos = ['apache2', 'back', 'land', 'mailbomb', 'neptune', 'pod', 'processtable', 'smurf', 'teardrop', 'udpstorm']
     probe = ['ipsweep', 'mscan', 'nmap', 'portsweep', 'saint', 'satan']
     r2l = ['spy', 'warezclient', 'ftp_write', 'guess_passwd', 'httptunnel', 'imap', 'multihop',
            'named', 'phf', 'sendmail', 'snmpgetattack', 'warezmaster', 'xlock', 'xsnoop']
     u2r = ['buffer_overflow', 'loadmodule', 'perl', 'ps', 'rootkit', 'snmpguess', 'sqlattack', 'worm xterm']
-
+    dos_count = probe_count = r2l_count = u2r_count = normal_count = 0
     for i in df.index:
         if df[i] in dos:
             df.at[i] = 'DOS'
+            dos_count += 1
+            continue
         if df[i] in probe:
             df.at[i] = 'probe'
+            probe_count += 1
+            continue
         if df[i] in r2l:
             df.at[i] = 'R2L'
+            r2l_count += 1
+            continue
         if df[i] in u2r:
             df.at[i] = 'U2R'
+            u2r_count += 1
+            continue
         # else 'normal'
+        if df[i] in normal:
+            normal_count += 1
+    print('normal count:', normal_count)
+    print('dos count:', dos_count)
+    print('probe count:', probe_count)
+    print('r2l count:', r2l_count)
+    print('u2r count:', u2r_count)
     return df
 
 
@@ -127,7 +143,7 @@ print('test labels', test_labels.shape, type(test_labels))
 test_matrix = scaler.transform(test_matrix)
 
 model = Sequential([
-    Dense(1, activation='relu', input_shape=[55]),
+    Dense(10, activation='relu', input_shape=[55]),
     # Dropout(0.25),
     # Dense(64, activation='relu'),
     # Dropout(0.25),
