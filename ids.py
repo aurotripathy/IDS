@@ -6,6 +6,7 @@ from sklearn.preprocessing import OneHotEncoder
 from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.models import Sequential
 from sklearn.preprocessing import StandardScaler
+from tensorflow.keras.utils import to_categorical
 
 root_folder = '/media/auro/RAID 5/networking'
 train_dataset = 'KDDTrain+.txt'
@@ -20,7 +21,7 @@ def attack_to_class(df):
     probe = ['ipsweep', 'mscan', 'nmap', 'portsweep', 'saint', 'satan']
     r2l = ['spy', 'warezclient', 'ftp_write', 'guess_passwd', 'httptunnel', 'imap', 'multihop',
            'named', 'phf', 'sendmail', 'snmpgetattack', 'warezmaster', 'xlock', 'xsnoop']
-    u2r = ['buffer_overflow', 'loadmodule', 'perl', 'ps', 'rootkit', 'snmpguess', 'sqlattack', 'worm xterm']
+    u2r = ['buffer_overflow', 'loadmodule', 'perl', 'ps', 'rootkit', 'snmpguess', 'sqlattack', 'worm', 'xterm']
     dos_count = probe_count = r2l_count = u2r_count = normal_count = 0
     for i in df.index:
         if df[i] in dos:
@@ -42,11 +43,14 @@ def attack_to_class(df):
         # else 'normal'
         if df[i] in normal:
             normal_count += 1
+            continue
+        print(df[i])
     print('normal count:', normal_count)
     print('dos count:', dos_count)
     print('probe count:', probe_count)
     print('r2l count:', r2l_count)
     print('u2r count:', u2r_count)
+    print('total count:', normal_count + dos_count + probe_count + r2l_count + u2r_count)
     return df
 
 
@@ -101,7 +105,13 @@ all_labels = attack_to_class(all_labels)
 label_encoder = LabelEncoder()
 all_encoded_labels = np.floor(label_encoder.fit_transform(all_labels))
 print(all_encoded_labels)
-print('unique_labels', np.unique(all_encoded_labels))
+
+total_classes = len(np.unique(all_encoded_labels))
+print('Unique labels:', np.unique(all_encoded_labels))
+
+all_encoded_labels = to_categorical(all_encoded_labels)
+print('labels categorical')
+print(all_encoded_labels)
 
 
 all_categorical_vars['protocol_type'] = label_encoder.fit_transform(all_categorical_vars['protocol_type'])
@@ -147,9 +157,10 @@ model = Sequential([
     # Dropout(0.25),
     # Dense(64, activation='relu'),
     # Dropout(0.25),
-    Dense(5, activation='softmax')
+    Dense(total_classes, activation='softmax')
 ])
 print(model.summary())
 
-model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+# model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 model.fit(train_matrix, train_labels, epochs=20, validation_data=(test_matrix, test_labels), verbose=2)
