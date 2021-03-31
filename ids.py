@@ -14,7 +14,7 @@ test_dataset = 'KDDTest+.txt'
 
 
 def attack_to_class(df):
-    """ converts the attacks to N=4 classes. Model output os one of these classes plus normal"""
+    """ converts the attacks to N=5 classes. Model output is one of these classes plus normal"""
     # categories + 'normal'
     normal = ['normal']
     dos = ['apache2', 'back', 'land', 'mailbomb', 'neptune', 'pod', 'processtable', 'smurf', 'teardrop', 'udpstorm']
@@ -44,7 +44,6 @@ def attack_to_class(df):
         if df[i] in normal:
             normal_count += 1
             continue
-        print(df[i])
     print('normal count:', normal_count)
     print('dos count:', dos_count)
     print('probe count:', probe_count)
@@ -97,11 +96,6 @@ print(all_labels.head())
 all_labels = attack_to_class(all_labels)
 
 # encode the labels
-# https://machinelearningmastery.com/how-to-one-hot-encode-sequence-data-in-python/
-# values = np.array(labels).astype('float32')
-# print(values)
-# integer encode
-
 label_encoder = LabelEncoder()
 all_encoded_labels = np.floor(label_encoder.fit_transform(all_labels))
 print(all_encoded_labels)
@@ -113,7 +107,7 @@ all_encoded_labels = to_categorical(all_encoded_labels)
 print('labels categorical')
 print(all_encoded_labels)
 
-
+# Encode categories
 all_categorical_vars['protocol_type'] = label_encoder.fit_transform(all_categorical_vars['protocol_type'])
 all_categorical_vars['service'] = label_encoder.fit_transform(all_categorical_vars['protocol_type'])
 all_categorical_vars['flag'] = label_encoder.fit_transform(all_categorical_vars['flag'])
@@ -121,7 +115,7 @@ print('unique protocol types', np.unique(all_categorical_vars['protocol_type']))
 print('unique service types', np.unique(all_categorical_vars['service']))
 print('unique flag types', np.unique(all_categorical_vars['flag']))
 
-# now encode the categorical inputs
+# One-hot encode the categorical inputs
 one_hot_encoder = OneHotEncoder()
 all_categorical_vars = one_hot_encoder.fit_transform(all_categorical_vars).toarray()
 
@@ -153,14 +147,14 @@ print('test labels', test_labels.shape, type(test_labels))
 test_matrix = scaler.transform(test_matrix)
 
 model = Sequential([
-    Dense(10, activation='relu', input_shape=[55]),
-    # Dropout(0.25),
-    # Dense(64, activation='relu'),
-    # Dropout(0.25),
+    Dense(50, activation='relu', input_shape=[55]),
+    Dropout(0.5),
+    Dense(25, activation='relu'),
+    Dropout(0.5),
     Dense(total_classes, activation='softmax')
 ])
 print(model.summary())
 
 # model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-model.fit(train_matrix, train_labels, epochs=20, validation_data=(test_matrix, test_labels), verbose=2)
+model.fit(train_matrix, train_labels, epochs=5, validation_data=(test_matrix, test_labels), verbose=2)
