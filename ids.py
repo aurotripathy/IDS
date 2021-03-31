@@ -3,10 +3,11 @@ import pandas
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import StandardScaler
 from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.models import Sequential
-from sklearn.preprocessing import StandardScaler
 from tensorflow.keras.utils import to_categorical
+from tensorflow.keras.optimizers import Adam
 
 root_folder = '/media/auro/RAID 5/networking'
 train_dataset = 'KDDTrain+.txt'
@@ -155,5 +156,5 @@ model = Sequential([
 ])
 print(model.summary())
 
-model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-model.fit(train_matrix, train_labels, epochs=5, validation_data=(test_matrix, test_labels), verbose=2)
+model.compile(optimizer=Adam(lr=0.0001), loss='categorical_crossentropy', metrics=['accuracy'])
+model.fit(train_matrix, train_labels, epochs=50, validation_data=(test_matrix, test_labels), verbose=2)
