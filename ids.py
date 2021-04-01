@@ -8,11 +8,14 @@ from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.optimizers import Adam
+import tensorflow as tf
+import matplotlib.pyplot as plt
 
 root_folder = '/media/auro/RAID 5/networking'
 train_dataset = 'KDDTrain+.txt'
 test_dataset = 'KDDTest+.txt'
 
+# TODO shuffle data
 
 def attack_to_class(df):
     """ converts the attacks to N=5 classes. Model output is one of these classes plus normal"""
@@ -128,7 +131,7 @@ data_matrix = np.concatenate([all_categorical_vars, all_continuous_vars], axis=1
 print('data matrix shape:', data_matrix.shape)
 print('labels shape', all_encoded_labels.shape)
 
-train_test_split = 0.7
+train_test_split = 0.9
 split_index = int(148517 * train_test_split)
 print('split at', split_index)
 
@@ -156,5 +159,39 @@ model = Sequential([
 ])
 print(model.summary())
 
-model.compile(optimizer=Adam(lr=0.0001), loss='categorical_crossentropy', metrics=['accuracy'])
-model.fit(train_matrix, train_labels, epochs=50, validation_data=(test_matrix, test_labels), verbose=2)
+# this commented code is to scan for a good learning-rate
+# lr_scheduler = tf.keras.callbacks.LearningRateScheduler(lambda epochs: 1e-4 * 10 ** (epochs / 50), verbose=1)
+# model.compile(optimizer=Adam(lr=0.0001), loss='categorical_crossentropy', metrics=['accuracy'])
+# history = model.fit(train_matrix, train_labels, epochs=100, validation_data=(test_matrix, test_labels), callbacks=[lr_scheduler], verbose=2)
+
+# scan for the appropriate learning rate
+# plt.semilogx(history.history["lr"], history.history["loss"])
+# plt.axis([1e-4, 1, 0, 1])
+# plt.show()
+
+# learning rate of 0.0006 found to have minimal loss
+nb_epochs = 30
+model.compile(optimizer=Adam(lr=0.0006), loss='categorical_crossentropy', metrics=['accuracy'])
+history = model.fit(train_matrix, train_labels, epochs=nb_epochs, validation_data=(test_matrix, test_labels), verbose=2)
+
+epoch_range = range(nb_epochs)
+acc = history.history['accuracy']
+loss = history.history['loss']
+val_acc = history.history['val_accuracy']
+val_loss = history.history['val_loss']
+
+plt.title('Training and Validation Accuracies')
+plt.plot(epoch_range, acc, 'r', label='training')
+plt.plot(epoch_range, val_acc, 'b', label='validation')
+plt.xlabel('epochs')
+plt.ylabel('accurcy')
+plt.legend()
+plt.figure()
+
+plt.title('Training and Validation Losses')
+plt.plot(epoch_range, loss, 'r', label='training')
+plt.plot(epoch_range, val_loss, 'b', label='validation')
+plt.xlabel('epochs')
+plt.ylabel('loss')
+plt.legend()
+plt.show()
