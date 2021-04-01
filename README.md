@@ -20,7 +20,15 @@ labels in CSV format
 `KDDTest+.TXT`: The full NSL-KDD test-set including attack-type 
 labels in CSV 
 
-
+The attack categories are listed below:
+```
+normal = ['normal']
+dos = ['apache2', 'back', 'land', 'mailbomb', 'neptune', 'pod', 'processtable', 'smurf', 'teardrop', 'udpstorm']
+probe = ['ipsweep', 'mscan', 'nmap', 'portsweep', 'saint', 'satan']
+r2l = ['spy', 'warezclient', 'ftp_write', 'guess_passwd', 'httptunnel', 'imap', 'multihop',
+           'named', 'phf', 'sendmail', 'snmpgetattack', 'warezmaster', 'xlock', 'xsnoop']
+u2r = ['buffer_overflow', 'loadmodule', 'perl', 'ps', 'rootkit', 'snmpguess', 'sqlattack', 'worm', 'xterm']
+```
 
 ### Appendix
 You can find a list of the input features at the 
