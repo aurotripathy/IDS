@@ -1,12 +1,12 @@
 ### Summary
 
 This project builds a neural-network based classifier 
-on an intrusion detection dataset. Initial accuracy is at **89%** with a two-layer neural network.
+on an intrusion detection dataset. Out-of-the-box accuracy is at **89%** with a two-layer neural network.
 The intrusion detector is a learnt predictive model (a five-class classifier) 
 capable of distinguishing between connections categorized as 
 intrusions/attacks and normal connections. 
 
-**No rules were applied, the model learns from the data.**
+**No rules, no logic, simply learns from the data.**
 
 ### Dataset Review
 
