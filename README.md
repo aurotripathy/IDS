@@ -59,6 +59,9 @@ model = Sequential([
 
 ![lr-search](/assets/LR-search.png)
 
+![loss](/assets/losses.png)
+
+![lr-search](/assets/accuracies.png)
 
 ### Appendix
 You can find a list of the input features at the 
