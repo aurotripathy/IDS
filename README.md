@@ -38,9 +38,9 @@ r2l = ['spy', 'warezclient', 'ftp_write', 'guess_passwd',
 u2r = ['buffer_overflow', 'loadmodule', 'perl', 'ps', 'rootkit', 
        'snmpguess', 'sqlattack', 'worm', 'xterm']
 ```
-For the purposes of classification, we reduce them to just five classes as shown above.
+For the purposes of classification, we reduce them to just five classes, dos, probe, r2l, u2r and normal.
 Also, note that the class distribution is in heavy imbalance 
-(will be addressed n a future model).
+(will be addressed in a future model).
 
 The input consists of columns shown in the appendix. 
 
