@@ -6,6 +6,8 @@ The intrusion detector is a learnt predictive model (a five-class classifier)
 capable of distinguishing between connections categorized as 
 intrusions/attacks and normal connections. 
 
+**No rules, the model learns from the data.**
+
 ### Dataset Review
 
 The dataset is the NSL-KDD dataset that you can download from the 
