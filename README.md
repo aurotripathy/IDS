@@ -73,9 +73,9 @@ the learning-rate versus loss graph).
 ### Appendix
 You can find a list of the input features at the 
 [original KDD site](http://kdd.ics.uci.edu/databases/kddcup99/kddcup.names) 
-Note that a few of the features and 'symbolic', i.e., they are categorical 
+Note that a few of the features are 'symbolic', i.e., they represent categories 
 whereas the rest are continuous. So effort has been spent to 
-harmonize these mix of categorical and continuous features.   
+harmonize the mix of categorical and continuous features to train them together.   
 ```
 duration: continuous.
 protocol_type: symbolic.
