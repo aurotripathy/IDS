@@ -36,6 +36,24 @@ r2l = ['spy', 'warezclient', 'ftp_write', 'guess_passwd',
 u2r = ['buffer_overflow', 'loadmodule', 'perl', 'ps', 'rootkit', 
        'snmpguess', 'sqlattack', 'worm', 'xterm']
 ```
+For the purposes of classification, we reduce them to just five classes as shown above.
+
+The input consists of columns shown in the appendix. 
+
+### Model
+The model is very simple and consists of a two hidden layers of densely (fully) 
+connected neurons with dropout layers to reduce over-fitting through regularization. 
+```
+model = Sequential([
+    Dense(50, activation='relu', input_shape=[55]),
+    Dropout(0.5),
+    Dense(25, activation='relu'),
+    Dropout(0.5),
+    Dense(total_classes, activation='softmax')
+])
+```
+
+### Results
 
 ### Appendix
 You can find a list of the input features at the 
