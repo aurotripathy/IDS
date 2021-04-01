@@ -56,6 +56,11 @@ model = Sequential([
 ```
 
 ### Results
+The model accuracy is ~89% (scroll to the third graph below).
+
+In the first graph, we search for the best learning rate 
+which turns out to be `0.0006` (the lowest point in 
+the learning-rate versus loss graph).
 
 ![lr-search](/assets/LR-search.png)
 
