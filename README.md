@@ -37,6 +37,8 @@ u2r = ['buffer_overflow', 'loadmodule', 'perl', 'ps', 'rootkit',
        'snmpguess', 'sqlattack', 'worm', 'xterm']
 ```
 For the purposes of classification, we reduce them to just five classes as shown above.
+Also, note that the class distribution is in heavy imbalance 
+(will be addressed n a future model).
 
 The input consists of columns shown in the appendix. 
 
@@ -54,6 +56,9 @@ model = Sequential([
 ```
 
 ### Results
+
+[lr-search](./assest/LR-search.png)
+
 
 ### Appendix
 You can find a list of the input features at the 
