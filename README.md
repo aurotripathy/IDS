@@ -57,7 +57,7 @@ model = Sequential([
 
 ### Results
 
-[lr-search](./assest/LR-search.png)
+![lr-search](/assets/LR-search.png)
 
 
 ### Appendix
