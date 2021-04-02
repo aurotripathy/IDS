@@ -14,7 +14,7 @@ The dataset is the NSL-KDD dataset that you can download from the
 [University of New Brunswick](https://www.unb.ca/cic/datasets/nsl.html)
 repository.
 
-The training and the test set are two highlighted below.
+The training and the test set are two files highlighted below.
 
 `KDDTrain+.TXT`: The full NSL-KDD train-set including attack-type 
 labels in CSV format
