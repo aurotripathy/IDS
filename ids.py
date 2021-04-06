@@ -9,6 +9,7 @@ from tensorflow.keras.callbacks import LearningRateScheduler
 from tensorflow.keras.optimizers import Adam
 import tensorflow as tf
 import matplotlib.pyplot as plt
+from utils import plot_graphs
 
 root_folder = '/media/auro/RAID 5/networking'
 train_dataset = 'KDDTrain+.txt'
@@ -159,14 +160,18 @@ model = Sequential([
 print(model.summary())
 
 # this commented code is to scan for a good learning-rate
-# lr_scheduler = tf.keras.callbacks.LearningRateScheduler(lambda epochs: 1e-4 * 10 ** (epochs / 50), verbose=1)
-# model.compile(optimizer=Adam(lr=0.0001), loss='categorical_crossentropy', metrics=['accuracy'])
-# history = model.fit(train_matrix, train_labels, epochs=100, validation_data=(test_matrix, test_labels), callbacks=[lr_scheduler], verbose=2)
+lr_scheduler = tf.keras.callbacks.LearningRateScheduler(lambda epochs: 1e-4 * 10 ** (epochs / 50), verbose=1)
+model.compile(optimizer=Adam(lr=0.0001), loss='categorical_crossentropy', metrics=['accuracy'])
+history = model.fit(train_matrix, train_labels, epochs=100, validation_data=(test_matrix, test_labels), callbacks=[lr_scheduler], verbose=2)
 
-# scan for the appropriate learning rate
-# plt.semilogx(history.history["lr"], history.history["loss"])
-# plt.axis([1e-4, 1, 0, 1])
-# plt.show()
+# visually scan for the appropriate learning rate
+plt.semilogx(history.history["lr"], history.history["loss"])
+plt.axis([1e-4, 1e-2, 0, 1])
+plt.xlabel('Learning rate')
+plt.ylabel('Loss')
+plt.title('Learning Rate vs Loss')
+plt.grid()
+plt.show()
 
 # learning rate of 0.0006 found to have minimal loss
 nb_epochs = 30
@@ -178,9 +183,5 @@ acc = history.history['accuracy']
 loss = history.history['loss']
 val_acc = history.history['val_accuracy']
 val_loss = history.history['val_loss']
-
-
-
-
 plot_graphs(history, "loss")
 plot_graphs(history, "accuracy")
