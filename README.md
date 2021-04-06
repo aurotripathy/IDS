@@ -66,11 +66,11 @@ In the first graph, we search for the best learning rate
 which turns out to be `0.0006` (the lowest point in 
 the learning-rate versus loss graph).
 
-![lr-search](/assets/LR-search.png)
+![lr-search](./assets/LR-search.png)
 
-![loss](/assets/losses.png)
+![loss](./assets/losses.png)
 
-![lr-search](/assets/accuracies.png)
+![lr-search](./assets/accuracies.png)
 
 ### Appendix
 You can find a list of the input features at the 
