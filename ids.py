@@ -180,24 +180,10 @@ loss = history.history['loss']
 val_acc = history.history['val_accuracy']
 val_loss = history.history['val_loss']
 
-plt.title('Training and Validation Accuracies')
-plt.plot(epoch_range, acc, 'r', label='training')
-plt.plot(epoch_range, val_acc, 'b', label='validation')
-plt.xlabel('epochs')
-plt.ylabel('accurcy')
-plt.legend()
-plt.figure()
-
-plt.title('Training and Validation Losses')
-plt.plot(epoch_range, loss, 'r', label='training')
-plt.plot(epoch_range, val_loss, 'b', label='validation')
-plt.xlabel('epochs')
-plt.ylabel('loss')
-plt.legend()
-plt.show()
 
 def plot_graphs(history, component):
-    plt.title('Train ' + component + ' and validation ' + component)
+    """ component is either accuracy or loss """
+    plt.title('Train ' + ' and Validation ' + component)
     plt.plot(history.history[component])
     plt.plot(history.history['val_'+component])
     plt.xlabel('Epochs')
