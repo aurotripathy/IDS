@@ -1,12 +1,11 @@
 import os
 import pandas
 import numpy as np
-from sklearn.preprocessing import LabelEncoder
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder, StandardScaler
 from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.utils import to_categorical
+from tensorflow.keras.callbacks import LearningRateScheduler
 from tensorflow.keras.optimizers import Adam
 import tensorflow as tf
 import matplotlib.pyplot as plt
@@ -181,16 +180,6 @@ val_acc = history.history['val_accuracy']
 val_loss = history.history['val_loss']
 
 
-def plot_graphs(history, component):
-    """ component is either accuracy or loss """
-    plt.title('Train ' + ' and Validation ' + component)
-    plt.plot(history.history[component])
-    plt.plot(history.history['val_'+component])
-    plt.xlabel('Epochs')
-    plt.ylabel(component)
-    plt.legend([component, 'val_'+component])
-    plt.grid()
-    plt.show()
 
 
 plot_graphs(history, "loss")
