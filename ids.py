@@ -195,3 +195,17 @@ plt.xlabel('epochs')
 plt.ylabel('loss')
 plt.legend()
 plt.show()
+
+def plot_graphs(history, component):
+    plt.title('Train ' + component + ' and validation ' + component)
+    plt.plot(history.history[component])
+    plt.plot(history.history['val_'+component])
+    plt.xlabel('Epochs')
+    plt.ylabel(component)
+    plt.legend([component, 'val_'+component])
+    plt.grid()
+    plt.show()
+
+
+plot_graphs(history, "loss")
+plot_graphs(history, "accuracy")
